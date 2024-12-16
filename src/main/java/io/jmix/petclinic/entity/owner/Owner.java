@@ -8,22 +8,31 @@ import io.jmix.petclinic.entity.Person;
 import io.jmix.petclinic.entity.pet.Pet;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
+// tag::start-class[]
 @JmixEntity
 @Table(name = "PETCLINIC_OWNER")
 @Entity(name = "petclinic_Owner")
 public class Owner extends Person {
 
-    @NotNull
-    @Column(name = "ADDRESS", nullable = false)
-    private String address;
+    // end::start-class[]
 
-    @Column(name = "CITY", nullable = false)
-    @NotNull
-    private String city;
+    // tag::addresses[]
+    @Composition // <1>
+    @OnDelete(DeletePolicy.CASCADE)
+    @OneToMany(mappedBy = "owner") // <2>
+    private List<Address> addresses;
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+    // end::addresses[]
 
     @Email
     @Column(name = "EMAIL")
@@ -62,19 +71,6 @@ public class Owner extends Person {
         this.email = email;
     }
 
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
+// tag::end-class[]
 }
+// end::end-class[]
