@@ -1,6 +1,6 @@
 :sample-project: jmix-data-modeling-composition-sample
 
-= Data Modeling - Composition
+= Data Modeling: Composition
 
 In this guide, you will learn about the Composition relationship in Jmix, a key feature that allows for tightly coupled and lifecycle-managed entity relationships. We will compare Compositions with Associations, highlighting their fundamental differences and when to use each.
 
@@ -32,21 +32,13 @@ The application includes the following event-driven features:
 - **Change 2**: Description of Change 2.
 
 
-[[final-application]]
-=== Final Application
-
-video::zTYx_KSeMzY[youtube,width=1280,height=600]
-
 [[association-vs-composition]]
 == Association vs. Composition
 
 In Jmix, relationships between entities can be defined as either `Associations` or `Compositions`, depending on the desired level of coupling and lifecycle control.
 
-=== Association: Loosely Coupled Entities
 An `Association` establishes a flexible link between entities that can exist independently. For example, a `Customer` and a `Product` can be associated, but neither depends on the other for its existence.
 
-
-=== Composition: Master-Detail Relationships
 A `Composition`, on the other hand, enforces a "master-detail" relationship. Detail entities are tightly coupled to their master, meaning they cannot exist independently. This type of relationship is useful when you want to ensure transactional consistency and lifecycle management across related entities.
 
 In the context of the Jmix Petclinic example, the relationship between an `Owner` and their `Addresses` is an example of a composition. An `Address` that does not belong to an `Owner` has no meaning within this domain. Changes made to an `Owner` and their `Addresses` are managed together and saved as part of a single transaction, ensuring data consistency.
@@ -112,19 +104,17 @@ When the user deletes an address, the row is marked for removal in the `DataCont
 
 image::owner-addresses-composition-datagrid-editing.png[Inline Editing Example, width=800, alt="Inline Editing for Addresses"]
 
-=== Implementing Inline Editing
-
 To configure inline editing for the `Address` entities in the `Owner` detail view, a `DataGrid` is used. As a first step, let’s take a look at the `owner-detail-view.xml` configuration, where the `DataGrid` is defined and set up for inline editing.
 
 [source,xml,indent=0]
 ----
 include::example$/src/main/resources/io/jmix/petclinic/view/owner/owner-detail-view.xml[tags=addresses]
 ----
-<1> The `editorBuffered="true"` attribute ensures that editing changes are not saved immediately but are buffered until explicitly saved by the user. This provides control over the editing process. `allRowsVisible="true"` allows the `DataGrid` to dynamically expand its height as new rows are added.
+<1> The `editorBuffered="true"` attribute ensures that changes made in the `DataGrid` editor are not immediately applied to the `DataContext` but remain in the editor buffer until the user explicitly confirms them. For more details, see the Vaadin Grid documentation on https://vaadin.com/docs/latest/components/grid/inline-editing#buffered[Inline Editing^].
 
-<2> Columns have to be marked as `editable`. In our case all columns `editable="true"` as we also want to create new addresses directly in the data grid.
+<2> Columns have to be marked as `editable`. In our case all columns are set to `true` as we want to create completely new addresses directly in the data grid.
 
-<3> An `editorActionsColumn` is added to handle row-specific editing. It includes options to enable editing, save changes, or cancel edits. This keeps the editing process intuitive and visually clear for users.
+<3> An `editorActionsColumn` is added to handle row-specific editing. It includes options to enable editing, save changes, or cancel edits.
 
 Next, we look at the changes needed in the `OwnerDetailView` Java controller. To fully enable inline editing, the controller must handle the creation and editing of records programmatically. For the "Create" action, a new `Address` entity is created, associated with the current `Owner`, and immediately opened for editing in the `DataGrid`.
 
@@ -137,21 +127,17 @@ include::example$/src/main/java/io/jmix/petclinic/view/owner/OwnerDetailView.jav
 <3> Adds the new `Address` instance to the `addressesDc` data container, making it available for display and editing in the `DataGrid`.
 <4> Selects the newly added `Address` in the `DataGrid` and opens it in the inline editor for immediate modification.
 
-=== Transactional Behavior and the Role of the DataContext
+=== Role of the DataContext
 
-The transactional behavior in Jmix is made possible by the `DataContext`. The `DataContext` acts as a temporary storage for entities that are being created, modified, or deleted within a view. Instead of persisting changes directly to the database, the `DataContext` holds these changes in memory until the user saves the root entity of the view.
+The `DataContext` in Jmix serves as a temporary storage for entities while a view is open. It allows changes made to entities—such as creating, modifying, or deleting them—to be tracked within the scope of the view without immediately persisting them to the database.
 
-In the `Owner` detail view, any changes to the associated `Address` entities are managed by the `DataContext`. For example, when a new address is added or an existing one is edited, these changes are stored temporarily. Only when the user confirms their changes by clicking "OK" on the overall view, all the modifications saved to the database in a single transaction. If the user cancels the view, the `DataContext` discards all pending changes, ensuring that no unintended modifications are persisted.
+In the `Owner` detail view, for example, any changes to the associated `Address` entities are held in the `DataContext`. These changes are only committed to the database when the user confirms them by clicking "OK" to save the `Owner` detail view. If the user cancels the view, the `DataContext` discards all pending changes, ensuring that no unintended modifications are persisted.
 
-This mechanism allows for greater flexibility and a user-friendly editing experience. Users can safely experiment with their changes, knowing that nothing is committed until they explicitly confirm. At the same time, this ensures data consistency by persisting all changes in a single transaction.
+This approach provides flexibility for editing workflows. Users can experiment with their changes in a safe, isolated context, knowing that nothing is committed until explicitly confirmed. At the same time, the `DataContext` ensures data consistency by grouping all changes into a single transaction when saved.
 
-You can read more about the `DataContext` in the User Interface section: xref:flow-ui:data/data-context.adoc[Data Components: DataContext].
+For more details about the `DataContext`, refer to the official documentation:
+xref:flow-ui:data/data-context.adoc[Data Components: DataContext^].
 
-
-[NOTE]
-====
-Using inline editing for compositions helps maintain a clear and intuitive user experience. However, for complex nested structures, dialog-based editing might be more suitable. We will explore such scenarios in later sections.
-====
 
 [[summary]]
 == Summary
