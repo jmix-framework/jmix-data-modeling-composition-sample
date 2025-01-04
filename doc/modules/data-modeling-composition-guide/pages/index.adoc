@@ -136,7 +136,7 @@ In the `Owner` detail view, for example, any changes to the associated `Address`
 This approach provides flexibility for editing workflows. Users can experiment with their changes in a safe, isolated context, knowing that nothing is committed until explicitly confirmed. At the same time, the `DataContext` ensures data consistency by grouping all changes into a single transaction when saved.
 
 For more details about the `DataContext`, refer to the official documentation:
-xref:flow-ui:data/data-context.adoc[Data Components: DataContext^].
+xref:flow-ui:data/data-context.adoc[Data Components: DataContext].
 
 
 
@@ -216,7 +216,7 @@ This mechanism, however, is not possible when using normal view navigation by ch
 Using dialog-based navigation avoids these limitations by keeping the parent view active and maintaining the `DataContext` hierarchy, enabling a consistent and intuitive editing workflow.
 
 For more details on dialog navigation and how it facilitates `DataContext` inheritance, see:
-xref:concepts:features.adoc#navigation-and-dialogs[Concepts > Navigation and Dialogs].
+xref:concepts:features.adoc#navigation-and-dialogs[Concepts: Navigation and Dialogs].
 
 [[summary]]
 == Summary
