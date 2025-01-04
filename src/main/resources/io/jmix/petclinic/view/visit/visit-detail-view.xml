@@ -16,6 +16,7 @@
         <fetchPlan extends="_base">
             <property name="type" fetchPlan="_instance_name"/>
             <property name="owner" fetchPlan="_instance_name"/>
+            <property name="healthRecords" fetchPlan="_base"/>
         </fetchPlan>
         <loader id="petsDl">
             <query>

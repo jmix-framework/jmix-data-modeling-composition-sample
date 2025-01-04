@@ -8,8 +8,10 @@
             <fetchPlan extends="_base">
                 <property name="type" fetchPlan="_instance_name"/>
                 <property name="owner" fetchPlan="_instance_name"/>
+                <property name="healthRecords" fetchPlan="_base"/>
             </fetchPlan>
             <loader/>
+            <collection id="healthRecordsDc" property="healthRecords"/>
         </instance>
         <collection id="allPetTypesDc"
                     class="io.jmix.petclinic.entity.pet.PetType">
@@ -21,13 +23,6 @@
             </loader>
         </collection>
     </data>
-    <facets>
-        <dataLoadCoordinator auto="true"/>
-    </facets>
-    <actions>
-        <action id="saveAction" type="detail_saveClose"/>
-        <action id="closeAction" type="detail_close"/>
-    </actions>
     <layout>
         <formLayout id="form" dataContainer="petDc">
             <textField id="nameField" property="name"/>
@@ -46,9 +41,48 @@
                 </actions>
             </entityPicker>
         </formLayout>
+        <h3 text="msg://io.jmix.petclinic.entity.pet/Pet.healthRecords" />
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <button action="healthRecordsDataGrid.create"/>
+            <button action="healthRecordsDataGrid.edit"/>
+            <button action="healthRecordsDataGrid.remove"/>
+        </hbox>
+        <!-- tag::health-records[] -->
+        <dataGrid id="healthRecordsDataGrid" dataContainer="healthRecordsDc" width="100%" height="100%">
+            <actions>
+                <action id="create" type="list_create">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+                <action id="edit" type="list_edit">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+                <action id="remove" type="list_remove"/>
+            </actions>
+            <columns>
+                <column property="recordDate"/>
+                <column property="diagnosis"/>
+                <column property="treatment"/>
+                <column property="medication"/>
+                <column property="healthStatus"/>
+                <column property="weight"/>
+                <column property="nextCheckupDate"/>
+            </columns>
+        </dataGrid>
+        <!-- end::health-records[] -->
         <hbox id="detailActions">
             <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>
     </layout>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
 </view>

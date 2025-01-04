@@ -2,6 +2,8 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://ownerDetailView.title"
       focusComponent="form">
+
+    <!-- tag::data-context[] -->
     <data>
         <instance id="ownerDc"
                   class="io.jmix.petclinic.entity.owner.Owner">
@@ -12,10 +14,14 @@
                 <property name="addresses" fetchPlan="_base"/>
             </fetchPlan>
             <loader/>
-            <collection id="petsDc" property="pets"/>
+            <collection id="petsDc" property="pets"/> <!--1-->
             <collection id="addressesDc" property="addresses"/>
         </instance>
     </data>
+
+    <!-- ... -->
+
+    <!-- end::data-context[] -->
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
@@ -42,11 +48,17 @@
                         <button action="petsDataGrid.edit"/>
                         <button action="petsDataGrid.remove"/>
                     </hbox>
-                    <dataGrid id="petsDataGrid" dataContainer="petsDc" width="100%" minHeight="20em">
+
+                    <!-- tag::pets[] -->
+                    <dataGrid id="petsDataGrid"
+                              dataContainer="petsDc"
+                              width="100%"
+                              minHeight="20em">
+                        <!--2-->
                         <actions>
                             <action id="create" type="list_create">
                                 <properties>
-                                    <property name="openMode" value="DIALOG"/>
+                                    <property name="openMode" value="DIALOG"/> <!--3-->
                                 </properties>
                             </action>
                             <action id="edit" type="list_edit">
@@ -63,6 +75,8 @@
                             <column property="type"/>
                         </columns>
                     </dataGrid>
+
+                    <!-- end::pets[] -->
                 </vbox>
             </tab>
             <!-- tag::addresses[] -->

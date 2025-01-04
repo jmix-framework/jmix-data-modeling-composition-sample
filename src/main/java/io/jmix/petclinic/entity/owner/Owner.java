@@ -41,11 +41,13 @@ public class Owner extends Person {
     @Column(name = "TELEPHONE")
     private String telephone;
 
+    // tag::pets[]
     @OnDelete(DeletePolicy.CASCADE)
     @Composition
     @OrderBy("identificationNumber")
     @OneToMany(mappedBy = "owner")
     private List<Pet> pets;
+    // end::pets[]
 
     public List<Pet> getPets() {
         return pets;

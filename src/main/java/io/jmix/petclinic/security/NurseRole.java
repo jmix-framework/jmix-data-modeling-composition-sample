@@ -1,6 +1,7 @@
 package io.jmix.petclinic.security;
 
 import io.jmix.petclinic.entity.User;
+import io.jmix.petclinic.entity.health.HealthRecord;
 import io.jmix.petclinic.entity.owner.Address;
 import io.jmix.petclinic.entity.owner.Owner;
 import io.jmix.petclinic.entity.pet.Pet;
@@ -49,7 +50,7 @@ public interface NurseRole {
     @EntityPolicy(entityClass = PetType.class, actions = EntityPolicyAction.READ)
     void petType();
 
-    @ViewPolicy(viewIds = {"petclinic_MyVisits", "petclinic_Pet.list", "petclinic_Owner.list", "petclinic_Visit.list", "petclinic_Specialty.list", "petclinic_Veterinarian.list", "petclinic_PetType.list", "petclinic_Owner.detail", "petclinic_Pet.detail", "petclinic_PetType.detail", "petclinic_PetType.lookup", "petclinic_Specialty.detail", "petclinic_Veterinarian.detail", "petclinic_Visit.detail", "petclinic_Address.detail"})
+    @ViewPolicy(viewIds = {"petclinic_MyVisits", "petclinic_Pet.list", "petclinic_Owner.list", "petclinic_Visit.list", "petclinic_Specialty.list", "petclinic_Veterinarian.list", "petclinic_PetType.list", "petclinic_Owner.detail", "petclinic_Pet.detail", "petclinic_PetType.detail", "petclinic_PetType.lookup", "petclinic_Specialty.detail", "petclinic_Veterinarian.detail", "petclinic_Visit.detail", "petclinic_Address.detail", "petclinic_HealthRecord.detail"})
     void views();
 
     @MenuPolicy(menuIds = {"petclinic_MyVisits", "petclinic_Pet.list", "petclinic_Owner.list", "petclinic_Visit.list", "petclinic_Specialty.list", "petclinic_Veterinarian.list", "petclinic_PetType.list"})
@@ -58,4 +59,8 @@ public interface NurseRole {
     @EntityAttributePolicy(entityClass = Address.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @EntityPolicy(entityClass = Address.class, actions = EntityPolicyAction.ALL)
     void address();
+
+    @EntityAttributePolicy(entityClass = HealthRecord.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityPolicy(entityClass = HealthRecord.class, actions = EntityPolicyAction.ALL)
+    void healthRecord();
 }

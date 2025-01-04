@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://healthRecordDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="healthRecordDc"
+                  class="io.jmix.petclinic.entity.health.HealthRecord">
+            <fetchPlan extends="_base"/>
+            <loader id="healthRecordDl"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <tabSheet id="contentTabSheet" width="100%" height="100%">
+            <tab id="generalInformationTab" label="msg://generalInformation">
+                <formLayout id="form" dataContainer="healthRecordDc">
+                    <responsiveSteps>
+                        <responsiveStep minWidth="0" columns="1"/>
+                    </responsiveSteps>
+                    <datePicker id="recordDateField" property="recordDate"/>
+                    <select id="healthStatusField" property="healthStatus"/>
+                    <datePicker id="nextCheckupDateField" property="nextCheckupDate"/>
+                </formLayout>
+            </tab>
+            <tab id="medicalDetailsTab" label="msg://medicalDetails">
+                <formLayout id="medicalDetailsForm" dataContainer="healthRecordDc">
+                    <responsiveSteps>
+                        <responsiveStep minWidth="0" columns="1"/>
+                    </responsiveSteps>
+                    <textArea id="diagnosisField" height="9.5em" property="diagnosis"/>
+                    <textArea id="treatmentField" height="9.5em" property="treatment"/>
+                    <textField id="medicationField" property="medication"/>
+                    <bigDecimalField id="weightField" property="weight" />
+                </formLayout>
+            </tab>
+        </tabSheet>
+        <hbox id="detailActions">
+            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="closeButton" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>
