@@ -48,36 +48,36 @@
                         <button action="petsDataGrid.edit"/>
                         <button action="petsDataGrid.remove"/>
                     </hbox>
+<!--@formatter:off-->
+<!-- tag::pets[] -->
+<dataGrid id="petsDataGrid"
+          dataContainer="petsDc"
+          width="100%"
+          minHeight="20em"> <!--2-->
+    <actions>
+        <action id="create" type="list_create">
+            <properties>
+                <property name="openMode" value="DIALOG"/> <!--3-->
+            </properties>
+        </action>
+        <action id="edit" type="list_edit">
+            <properties>
+                <property name="openMode" value="DIALOG"/>
+            </properties>
+        </action>
+        <action id="remove" type="list_remove"/>
+    </actions>
+    <columns>
+        <column property="name"/>
+        <column property="identificationNumber"/>
+        <column property="birthdate"/>
+        <column property="type"/>
+    </columns>
+</dataGrid>
 
-                    <!-- tag::pets[] -->
-                    <dataGrid id="petsDataGrid"
-                              dataContainer="petsDc"
-                              width="100%"
-                              minHeight="20em">
-                        <!--2-->
-                        <actions>
-                            <action id="create" type="list_create">
-                                <properties>
-                                    <property name="openMode" value="DIALOG"/> <!--3-->
-                                </properties>
-                            </action>
-                            <action id="edit" type="list_edit">
-                                <properties>
-                                    <property name="openMode" value="DIALOG"/>
-                                </properties>
-                            </action>
-                            <action id="remove" type="list_remove"/>
-                        </actions>
-                        <columns>
-                            <column property="name"/>
-                            <column property="identificationNumber"/>
-                            <column property="birthdate"/>
-                            <column property="type"/>
-                        </columns>
-                    </dataGrid>
-
-                    <!-- end::pets[] -->
-                </vbox>
+<!-- end::pets[] -->
+<!--@formatter:on-->
+            </vbox>
             </tab>
             <!-- tag::addresses[] -->
             <tab id="addressesTab" label="msg://io.jmix.petclinic.entity.owner/Owner.addresses">

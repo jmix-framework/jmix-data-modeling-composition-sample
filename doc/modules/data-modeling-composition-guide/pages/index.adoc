@@ -80,7 +80,7 @@ include::example$/src/main/java/io/jmix/petclinic/entity/owner/Owner.java[tags=s
 
 <2> In addition to the `@Composition` annotation, this is a standard JPA `@OneToMany` association. The `@OneToMany` specifies the database-level relationship between the `Owner` and its `Address` entities, ensuring that multiple `Address` instances can be linked to a single `Owner`.
 
-[source,java]
+[source,java,indent=0]
 ----
 include::example$/src/main/java/io/jmix/petclinic/entity/owner/Address.java[tags=start-class;attributes;end-class]
 ----
@@ -118,7 +118,7 @@ include::example$/src/main/resources/io/jmix/petclinic/view/owner/owner-detail-v
 
 Next, we look at the changes needed in the `OwnerDetailView` Java controller. To fully enable inline editing, the controller must handle the creation and editing of records programmatically. For the "Create" action, a new `Address` entity is created, associated with the current `Owner`, and immediately opened for editing in the `DataGrid`.
 
-[source,java]
+[source,java,indent=0]
 ----
 include::example$/src/main/java/io/jmix/petclinic/view/owner/OwnerDetailView.java[tags=start-class;create;edit;end-class]
 ----
@@ -131,14 +131,12 @@ include::example$/src/main/java/io/jmix/petclinic/view/owner/OwnerDetailView.jav
 
 The `DataContext` in Jmix serves as a temporary storage for entities while a view is open. It allows changes made to entities—such as creating, modifying, or deleting them—to be tracked within the scope of the view without immediately persisting them to the database.
 
-In the `Owner` detail view, for example, any changes to the associated `Address` entities are held in the `DataContext`. These changes are only committed to the database when the user confirms them by clicking "OK" to save the `Owner` detail view. If the user cancels the view, the `DataContext` discards all pending changes, ensuring that no unintended modifications are persisted.
+In the `Owner` detail view, for example, any changes to the associated `Address` entities are held in the `DataContext`. These changes are only committed to the database when the user confirms them by clicking "OK" to save the Owner detail view. If the user cancels the view, the `DataContext` discards all pending changes, ensuring that no unintended modifications are persisted.
 
 This approach provides flexibility for editing workflows. Users can experiment with their changes in a safe, isolated context, knowing that nothing is committed until explicitly confirmed. At the same time, the `DataContext` ensures data consistency by grouping all changes into a single transaction when saved.
 
-For more details about the `DataContext`, refer to the official documentation:
+For more details about the `DataContext`, see the User Interface Section on
 xref:flow-ui:data/data-context.adoc[Data Components: DataContext].
-
-
 
 [[multi-level-composition]]
 == Multi-Level Composition
@@ -162,19 +160,19 @@ The multi-level composition is structured as follows:
 Here is the updated data model configuration:
 
 .Owner.java
-[source,java]
+[source,java,indent=0]
 ----
 include::example$/src/main/java/io/jmix/petclinic/entity/owner/Owner.java[tags=start-class;pets;end-class]
 ----
 
 .Pet.java
-[source,java]
+[source,java,indent=0]
 ----
 include::example$/src/main/java/io/jmix/petclinic/entity/pet/Pet.java[tags=start-class;health-records;owner;end-class]
 ----
 
 .HealthRecord.java
-[source,java]
+[source,java,indent=0]
 ----
 include::example$/src/main/java/io/jmix/petclinic/entity/health/HealthRecord.java[tags=start-class;pet;end-class]
 ----
@@ -195,25 +193,25 @@ include::example$/src/main/resources/io/jmix/petclinic/view/owner/owner-detail-v
 <2> The `petsDataGrid` is configured to display and manage the list of `Pet` entities associated with the `Owner`. It is bound to the `petsDc` container, which links the grid's data to the parent `DataContext`.
 <3> The `create` and `edit` actions for the `petsDataGrid` are configured with `openMode="DIALOG"`. This ensures that new or edited `Pet` entities are handled within a dialog window, inheriting the `DataContext` from the parent view.
 
+Now, let’s take a look at the `PetDetailView`. Here, we follow the same approach by using the dialog mode again for editing `HealthRecord` entities associated with a `Pet`. This ensures that all changes are consistently linked back to the `Owner` and maintain the same `DataContext` hierarchy.
+
 .pet-detail-view.xml
 [source,xml,indent=0]
 ----
 include::example$/src/main/resources/io/jmix/petclinic/view/pet/pet/pet-detail-view.xml[tags=health-records]
 ----
 
-The `PetDetailView` includes a nested `DataGrid` for managing `HealthRecord` entities. To ensure that changes to `HealthRecord` entities are correctly linked to their parent `Pet` and ultimately to the `Owner`, dialog windows are used for editing both `Pet` and `HealthRecord`. This configuration ensures that the `DataContext` is inherited across two levels of nesting, so all changes—creating an `Owner`, adding a `Pet`, and editing `HealthRecord` entries—are saved together only when the `Owner` is finally saved. The dialog windows stack on top of each other, preserving the context of the parent entities.
+The `PetDetailView` includes a nested `DataGrid` for managing `HealthRecord` entities. Using dialog windows ensures that changes to `HealthRecord` entities are linked to their parent `Pet` and ultimately to the `Owner`, with all changes saved together when the `Owner` is confirmed.
 
 ==== Dialog-Based Editing and Implicit Parent Data Context
 
 When managing nested entities like `Pet` and `HealthRecord`, the use of `openMode="DIALOG"` for editing actions ensures that the parent-child relationship in the `DataContext` is automatically preserved. This behavior is similar to programmatically setting the `parentDataContext`, but it happens implicitly through the dialog-based navigation.
 
-By opening child views (e.g., `PetDetailView` or `HealthRecordDetailView`) in dialog windows, Jmix automatically links the `DataContext` of the child view to that of the parent view. This ensures:
-- **Transactional Consistency**: Changes made in the child views are tracked in the same transaction as the parent entity.
-- **Hierarchical Data Management**: Updates to nested entities, such as creating a `HealthRecord` for a `Pet`, are not committed to the database until the user confirms changes by saving the top-level parent entity (e.g., `Owner`).
+By opening child views (e.g., `PetDetailView` or `HealthRecordDetailView`) in dialog windows, Jmix automatically links the `DataContext` of the child view to that of the parent view.
 
 This mechanism, however, is not possible when using normal view navigation by changing the URL or navigating to a different route. This limitation arises from how Vaadin Flow operates, as navigating to a new route creates an entirely new view instance with its own `DataContext`. As a result, the relationship between the parent and child `DataContext` instances is lost, and changes in the child view cannot be propagated back to the parent view.
 
-Using dialog-based navigation avoids these limitations by keeping the parent view active and maintaining the `DataContext` hierarchy, enabling a consistent and intuitive editing workflow.
+By relying on dialog-based navigation, these issues are resolved, as it keeps the parent view active and maintains the `DataContext` hierarchy. This approach is especially effective in the context of Compositions and Aggregated Roots, where maintaining both the transactional and visual relationship between entities is crucial. Dialog windows not only preserve the data context but also provide users with a clear and intuitive understanding of their position within the hierarchy, enhancing the overall usability of the application.
 
 For more details on dialog navigation and how it facilitates `DataContext` inheritance, see:
 xref:concepts:features.adoc#navigation-and-dialogs[Concepts: Navigation and Dialogs].
