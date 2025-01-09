@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://coverageDetailsDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="coverageDetailsDc"
+                  class="io.jmix.petclinic.entity.coverage.CoverageDetails">
+            <fetchPlan extends="_base">
+                <property name="insuranceProvider" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="coverageDetailsDl"/>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="coverageDetailsDc">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+                <responsiveStep minWidth="40em" columns="2"/>
+            </responsiveSteps>
+            <select id="coverageTypeField" property="coverageType"/>
+            <entityPicker id="insuranceProviderField" property="insuranceProvider">
+                <actions>
+                    <action id="entityLookup" type="entity_lookup"/>
+                    <action id="entityClear" type="entity_clear"/>
+                </actions>
+            </entityPicker>
+            <textField id="policyNumberField" property="policyNumber"/>
+            <textField id="maxCoverageAmountField" property="maxCoverageAmount"/>
+            <textField id="coveragePercentageField" property="coveragePercentage"/>
+        </formLayout>
+        <hbox id="detailActions">
+            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="closeButton" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

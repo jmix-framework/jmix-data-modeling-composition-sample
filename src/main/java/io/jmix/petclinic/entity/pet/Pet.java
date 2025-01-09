@@ -5,6 +5,7 @@ import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.petclinic.entity.NamedEntity;
+import io.jmix.petclinic.entity.coverage.CoverageDetails;
 import io.jmix.petclinic.entity.health.HealthRecord;
 import io.jmix.petclinic.entity.owner.Owner;
 import jakarta.persistence.*;
@@ -16,7 +17,9 @@ import java.util.List;
 
 // tag::start-class[]
 @JmixEntity
-@Table(name = "PETCLINIC_PET")
+@Table(name = "PETCLINIC_PET", indexes = {
+        @Index(name = "IDX_PETCLINIC_PET_COVERAGE_DETAILS", columnList = "COVERAGE_DETAILS_ID")
+})
 @Entity(name = "petclinic_Pet")
 public class Pet extends NamedEntity {
 
@@ -25,27 +28,40 @@ public class Pet extends NamedEntity {
     @Column(name = "IDENTIFICATION_NUMBER", nullable = false)
     @NotNull
     private String identificationNumber;
+    @JoinColumn(name = "OWNER_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Owner owner;
 
+
+    @JoinColumn(name = "TYPE_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private PetType type;
+
+    @Column(name = "BIRTHDATE")
+    private LocalDate birthdate;
 
     // tag::health-records[]
     @OnDelete(DeletePolicy.CASCADE)
     @Composition
     @OneToMany(mappedBy = "pet")
     private List<HealthRecord> healthRecords;
+    @OnDelete(DeletePolicy.CASCADE)
+    @JoinColumn(name = "COVERAGE_DETAILS_ID")
+    @Composition
+    @OneToOne(fetch = FetchType.LAZY)
+    private CoverageDetails coverageDetails;
+
     // end::health-records[]
-
-    @Column(name = "BIRTHDATE")
-    private LocalDate birthdate;
-
-    @JoinColumn(name = "TYPE_ID")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private PetType type;
 
     // tag::owner[]
 
-    @JoinColumn(name = "OWNER_ID")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Owner owner;
+    public CoverageDetails getCoverageDetails() {
+        return coverageDetails;
+    }
+
+    public void setCoverageDetails(CoverageDetails coverageDetails) {
+        this.coverageDetails = coverageDetails;
+    }
     // end::owner[]
 
     public List<HealthRecord> getHealthRecords() {

@@ -13,6 +13,8 @@
         <item view="petclinic_Veterinarian.list"
               title="msg://io.jmix.petclinic.view.veterinarian.veterinarian/veterinarianListView.title"/>
         <item view="petclinic_PetType.list" title="msg://io.jmix.petclinic.view.pet.pettype/petTypeListView.title"/>
+        <item view="petclinic_InsuranceProvider.list"
+              title="msg://io.jmix.petclinic.view.coverage.insuranceprovider/insuranceProviderListView.title"/>
     </menu>
     <menu id="security" title="msg://io.jmix.petclinic/menu.security.title" icon="KEY_O">
         <item view="User.list" title="msg://io.jmix.petclinic.view.user/UserListView.title"/>

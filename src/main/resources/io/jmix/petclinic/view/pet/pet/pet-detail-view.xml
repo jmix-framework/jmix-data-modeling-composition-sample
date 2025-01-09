@@ -9,6 +9,7 @@
                 <property name="type" fetchPlan="_instance_name"/>
                 <property name="owner" fetchPlan="_instance_name"/>
                 <property name="healthRecords" fetchPlan="_base"/>
+                <property name="coverageDetails" fetchPlan="_base"/>
             </fetchPlan>
             <loader/>
             <collection id="healthRecordsDc" property="healthRecords"/>
@@ -40,8 +41,13 @@
                     <action id="entityClear" type="entity_clear"/>
                 </actions>
             </entityPicker>
+            <entityPicker id="coverageDetailsField" property="coverageDetails">
+                <actions>
+                    <action id="entityOpen" type="entity_openComposition"/>
+                </actions>
+            </entityPicker>
         </formLayout>
-        <h3 text="msg://io.jmix.petclinic.entity.pet/Pet.healthRecords" />
+        <h3 text="msg://io.jmix.petclinic.entity.pet/Pet.healthRecords"/>
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button action="healthRecordsDataGrid.create"/>
             <button action="healthRecordsDataGrid.edit"/>

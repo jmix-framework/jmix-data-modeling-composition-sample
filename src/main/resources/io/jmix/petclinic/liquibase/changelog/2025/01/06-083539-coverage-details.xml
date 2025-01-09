@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1" author="petclinic">
+        <createTable tableName="PETCLINIC_COVERAGE_DETAILS">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_PETCLINIC_COVERAGE_DETAILS"/>
+            </column>
+            <column name="COVERAGE_TYPE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="INSURANCE_PROVIDER_ID" type="UUID"/>
+            <column name="POLICY_NUMBER" type="VARCHAR(255)"/>
+            <column name="MAX_COVERAGE_AMOUNT" type="DECIMAL(19, 2)"/>
+            <column name="COVERAGE_PERCENTAGE" type="DOUBLE"/>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_BY" type="VARCHAR(255)"/>
+            <column name="CREATED_DATE" type="timestamp with time zone"/>
+            <column name="LAST_MODIFIED_BY" type="VARCHAR(255)"/>
+            <column name="LAST_MODIFIED_DATE" type="timestamp with time zone"/>
+            <column name="DELETED_BY" type="VARCHAR(255)"/>
+            <column name="DELETED_DATE" type="timestamp with time zone"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="2" author="petclinic">
+        <createTable tableName="PETCLINIC_INSURANCE_PROVIDER">
+            <column name="ID" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_PETCLINIC_INSURANCE_PROVIDER"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="VERSION" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_BY" type="VARCHAR(255)"/>
+            <column name="CREATED_DATE" type="timestamp with time zone"/>
+            <column name="LAST_MODIFIED_BY" type="VARCHAR(255)"/>
+            <column name="LAST_MODIFIED_DATE" type="timestamp with time zone"/>
+            <column name="DELETED_BY" type="VARCHAR(255)"/>
+            <column name="DELETED_DATE" type="timestamp with time zone"/>
+            <column name="STREET" type="VARCHAR(255)"/>
+            <column name="HOUSE_NUMBER" type="VARCHAR(255)"/>
+            <column name="POSTAL_CODE" type="VARCHAR(255)"/>
+            <column name="CITY" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="3" author="petclinic">
+        <addColumn tableName="PETCLINIC_PET">
+            <column name="COVERAGE_DETAILS_ID" type="UUID"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="4" author="petclinic">
+        <createIndex indexName="IDX_PETCLINIC_COVERAGE_DETAILS_INSURANCE_PROVIDER"
+                     tableName="PETCLINIC_COVERAGE_DETAILS">
+            <column name="INSURANCE_PROVIDER_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="INSURANCE_PROVIDER_ID" baseTableName="PETCLINIC_COVERAGE_DETAILS"
+                                 constraintName="FK_PETCLINIC_COVERAGE_DETAILS_ON_INSURANCE_PROVIDER"
+                                 referencedColumnNames="ID" referencedTableName="PETCLINIC_INSURANCE_PROVIDER"/>
+    </changeSet>
+    <changeSet id="5" author="petclinic">
+        <createIndex indexName="IDX_PETCLINIC_PET_COVERAGE_DETAILS" tableName="PETCLINIC_PET">
+            <column name="COVERAGE_DETAILS_ID"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="COVERAGE_DETAILS_ID" baseTableName="PETCLINIC_PET"
+                                 constraintName="FK_PETCLINIC_PET_ON_COVERAGE_DETAILS" referencedColumnNames="ID"
+                                 referencedTableName="PETCLINIC_COVERAGE_DETAILS"/>
+    </changeSet>
+</databaseChangeLog>
