@@ -321,7 +321,7 @@ Compositions are a powerful tool in Jmix, enabling developers to model master-de
 [[further-information]]
 === Further Information
 
-* xref:data-model:entities.adoc#references[Entity References in Jmix Data Model]
-* xref:data-model:entities.adoc#composition[Composition Relationships in Jmix]
+* xref:data-model:entities.adoc#references[Data Model: References]
+* xref:data-model:entities.adoc#composition[Data Model: Composition]
 * xref:flow-ui:data/data-context.adoc[Data Components: DataContext]
-* xref:concepts:features.adoc#editing-aggregates[Editing Aggregates in Jmix]
+* xref:concepts:features.adoc#editing-aggregates[Concepts: Editing Aggregates]
