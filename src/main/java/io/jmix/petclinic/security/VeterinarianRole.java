@@ -50,7 +50,7 @@ public interface VeterinarianRole {
     void veterinarian();
 
     @MenuPolicy(menuIds = {"petclinic_Pet.list", "petclinic_Owner.list", "petclinic_Visit.list", "petclinic_Specialty.list", "petclinic_Veterinarian.list", "petclinic_PetType.list", "petclinic_InsuranceProvider.list"})
-    @ViewPolicy(viewIds = {"petclinic_Visit.list", "petclinic_Pet.list", "petclinic_Owner.list", "petclinic_Veterinarian.list", "petclinic_Specialty.list", "petclinic_PetType.list", "petclinic_Visit.detail", "petclinic_Veterinarian.detail", "petclinic_Pet.detail", "petclinic_Owner.detail", "petclinic_Address.detail", "petclinic_HealthRecord.detail", "petclinic_InsuranceProvider.list", "petclinic_InsuranceProvider.detail", "petclinic_CoverageDetails.detail"})
+    @ViewPolicy(viewIds = {"petclinic_Visit.list", "petclinic_Pet.list", "petclinic_Owner.list", "petclinic_Veterinarian.list", "petclinic_Specialty.list", "petclinic_PetType.list", "petclinic_Visit.detail", "petclinic_Veterinarian.detail", "petclinic_Pet.detail", "petclinic_Owner.detail", "petclinic_Address.detail", "petclinic_HealthRecord.detail", "petclinic_InsuranceProvider.list", "petclinic_InsuranceProvider.detail", "petclinic_CoverageDetails.detail", "petclinic_Pet.create"})
     void screens();
 
     @EntityAttributePolicy(entityClass = Address.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)

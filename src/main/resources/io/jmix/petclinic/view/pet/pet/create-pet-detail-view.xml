@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://createPetDetailView.title"
+      focusComponent="form">
+    <data>
+        <instance id="petDc"
+                  class="io.jmix.petclinic.entity.pet.Pet">
+            <fetchPlan extends="_base">
+                <property name="owner" fetchPlan="_base"/>
+                <property name="type" fetchPlan="_base"/>
+                <property name="coverageDetails" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="petDl"/>
+            <instance id="coverageDetailsDc" property="coverageDetails"/> <!--1-->
+        </instance>
+        <collection id="insuranceProvidersDc"
+                    class="io.jmix.petclinic.entity.coverage.InsuranceProvider">
+            <fetchPlan extends="_base"/>
+            <loader id="insuranceProvidersDl" readOnly="true">
+                <query>
+                    <![CDATA[select e from petclinic_InsuranceProvider e]]>
+                </query>
+            </loader>
+        </collection>
+        <collection id="ownersDc"
+                    class="io.jmix.petclinic.entity.owner.Owner">
+            <fetchPlan extends="_base"/>
+            <loader id="ownersDl">
+                <query>
+                    <![CDATA[select e from petclinic_Owner e]]>
+                </query>
+            </loader>
+        </collection>
+        <collection id="petTypesDc"
+                    class="io.jmix.petclinic.entity.pet.PetType">
+            <fetchPlan extends="_base"/>
+            <loader id="petTypesDl">
+                <query>
+                    <![CDATA[select e from petclinic_PetType e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <actions>
+        <action id="saveAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
+    <layout>
+        <formLayout id="form" dataContainer="petDc">
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+                <responsiveStep minWidth="40em" columns="2"/>
+            </responsiveSteps>
+            <textField id="nameField" property="name"/>
+            <textField id="identificationNumberField" property="identificationNumber"/>
+            <entityComboBox id="ownerField" property="owner" itemsContainer="ownersDc" />
+            <entityComboBox id="typeField" property="type" itemsContainer="petTypesDc" />
+            <datePicker id="birthdateField" property="birthdate"/>
+        </formLayout>
+        <hr />
+        <h3 text="msg://io.jmix.petclinic.entity.pet/Pet.coverageDetails" />
+
+        <formLayout id="coverageDetailsForm" dataContainer="coverageDetailsDc"> <!--2-->
+            <responsiveSteps>
+                <responsiveStep minWidth="0" columns="1"/>
+                <responsiveStep minWidth="40em" columns="2"/>
+            </responsiveSteps>
+            <select id="coverageTypeField" property="coverageType"/>
+            <entityComboBox id="insuranceProviderField"
+                            property="insuranceProvider"
+                            itemsContainer="insuranceProvidersDc"
+                            enabled="false"
+            />
+            <textField id="policyNumberField" property="policyNumber" enabled="false"/>
+            <textField id="maxCoverageAmountField" property="maxCoverageAmount" enabled="false"/>
+            <textField id="coveragePercentageField" property="coveragePercentage" enabled="false"/>
+        </formLayout>
+        <hbox id="detailActions">
+            <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="closeButton" action="closeAction"/>
+        </hbox>
+    </layout>
+</view>

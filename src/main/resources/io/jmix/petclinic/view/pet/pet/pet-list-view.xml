@@ -88,7 +88,12 @@
                   minHeight="20em"
                   dataContainer="petsDc">
             <actions>
-                <action id="create" type="list_create"/>
+                <action id="create" type="list_create">
+                    <properties>
+                        <property name="viewClass" value="io.jmix.petclinic.view.pet.pet.CreatePetDetailView"/>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
                 <action id="edit" type="list_edit"/>
                 <action id="remove" type="list_remove"/>
                 <action id="excelExport" type="grdexp_excelExport"/>
