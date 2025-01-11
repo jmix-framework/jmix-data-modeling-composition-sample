@@ -41,11 +41,14 @@
                     <action id="entityClear" type="entity_clear"/>
                 </actions>
             </entityPicker>
+
+            <!-- tag::coverage-details[] -->
             <entityPicker id="coverageDetailsField" property="coverageDetails">
                 <actions>
                     <action id="entityOpen" type="entity_openComposition"/>
                 </actions>
             </entityPicker>
+            <!-- end::coverage-details[] -->
         </formLayout>
         <h3 text="msg://io.jmix.petclinic.entity.pet/Pet.healthRecords"/>
         <hbox id="buttonsPanel" classNames="buttons-panel">

@@ -45,13 +45,20 @@ public class Pet extends NamedEntity {
     @Composition
     @OneToMany(mappedBy = "pet")
     private List<HealthRecord> healthRecords;
+
+    // end::health-records[]
+
+
+    // tag::coverage-details[]
+    @Composition
     @OnDelete(DeletePolicy.CASCADE)
     @JoinColumn(name = "COVERAGE_DETAILS_ID")
-    @Composition
     @OneToOne(fetch = FetchType.LAZY)
     private CoverageDetails coverageDetails;
 
-    // end::health-records[]
+    // end::coverage-details[]
+
+
 
     // tag::owner[]
 

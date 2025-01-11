@@ -216,12 +216,113 @@ By relying on dialog-based navigation, these issues are resolved, as it keeps th
 For more details on dialog navigation and how it facilitates `DataContext` inheritance, see:
 xref:concepts:features.adoc#navigation-and-dialogs[Concepts: Navigation and Dialogs].
 
+== One-to-One Composition
+
+In addition to the previously discussed One-to-Many compositions, Jmix also supports One-to-One compositions. This type of composition is useful when the child entity is singular and uniquely tied to its parent. For example, in the context of the Petclinic domain, we introduce the `CoverageDetails` entity, which represents specific coverage-related information for a pet. Each pet can have at most one associated `CoverageDetails` instance.
+
+=== Data Model
+
+The data model for the One-to-One composition between `Pet` and `CoverageDetails` is structured as follows:
+
+.Pet.java
+[source,java,indent=0]
+----
+include::example$/src/main/java/io/jmix/petclinic/entity/pet/Pet.java[tags=start-class;coverage-details;end-class]
+----
+
+The `@JoinColumn` annotation specifies the foreign key column, `COVERAGE_DETAILS_ID`, in the `Pet` table. This column links the `Pet` entity to its associated `CoverageDetails` entity. By placing the foreign key on the `Pet` side, the `Pet` entity becomes the owning side of the One-to-One relationship. Being the owning side means that the `Pet` entity is responsible for managing and persisting changes to the relationship, including the foreign key, in the database.
+
+Combined with `@Composition`, this setup ensures that the `CoverageDetails` entity's lifecycle is tightly bound to the `Pet`. For example, when a `Pet` entity is deleted, the associated `CoverageDetails` is also automatically removed, as dictated by the `@OnDelete(DeletePolicy.CASCADE)` configuration.
+
+This example uses a unidirectional One-to-One association, meaning that we only have a reference from `Pet` to `CoverageDetails` and not the other way around. This is because there is no need to navigate from `CoverageDetails` to `Pet` within the scope of this example. However, if such a use case arises, you can easily make the association bidirectional by adding a corresponding back-reference in the `CoverageDetails` entity. Below is an example of how to define a bidirectional One-to-One association:
+
+.CoverageDetails.java
+[source,java]
+----
+@OneToOne(fetch = FetchType.LAZY, mappedBy = "coverageDetails")
+private Pet pet;
+----
+
+The `mappedBy` attribute indicates that the `CoverageDetails` entity does not own the relationship; instead, it references the ownership on the `Pet` side.
+
+Adding this back-reference would allow navigation from `CoverageDetails` to `Pet` via Java and JPQL queries. For more information about unidirectional and bidirectional associations, as well as other JPA relationship concepts like owning side and inverse side, see the guide on xref:data-modeling-many-to-many-guide:index.adoc[Data Modeling: Many-to-Many Associations].
+
+=== UI Representation
+
+==== Dialog-Based Editing
+
+For this example, we configure the `PetDetailView` to manage the `CoverageDetails` entity using a dialog-based detail view. This approach allows detailed editing of the `CoverageDetails` while preserving the context of the `Pet` in the parent view.
+
+image::pet-detail-view-dialog-example.png[Pet Detail View with EntityPicker, width=800, alt="Pet Detail View with EntityPicker"]
+
+image::coverage-detail-dialog-example.png[Coverage Details Dialog View, width=800, alt="Coverage Details Dialog"]
+
+In the `PetDetailView`, the `CoverageDetails` entity is managed using an `EntityPicker` component with an `entity_openComposition` action. This action is specifically designed for One-to-One compositions and simplifies the creation and editing of associated entities.
+
+.pet-detail-view.xml
+[source,xml,indent=0]
+----
+include::example$/src/main/resources/io/jmix/petclinic/view/pet/pet/pet-detail-view.xml[tags=coverage-details]
+----
+
+The `entity_openComposition` action ensures that a new instance of the `CoverageDetails` entity is created and added to the `DataContext` if it does not already exist. If the `CoverageDetails` entity is already linked to the `Pet`, the action will open the associated `CoverageDetails` entity in a dialog for editing.
+
+When the user interacts with the `entityPicker` and invokes this action, the `CoverageDetails` entity is seamlessly managed within the same transactional context as the `Pet`. This ensures that changes are held in the `DataContext` and only persisted to the database when the parent `Pet` is saved. If the user cancels the editing operation, the `DataContext` discards all changes, maintaining data integrity.
+
+See also: xref:flow-ui:actions/entity-picker-actions.adoc#entity_openComposition[Entity Picker Actions: entity_openComposition].
+
+Let's now look at an alternative implementation where we use inline editing in the context of a one-to-one composition.
+
+==== Inline Editing
+
+In this example, we enhance the process of creating new `Pet` entities by introducing a new `CreatePetDetailView`. This view is designed to simplify the workflow by allowing users to define `CoverageDetails` at the same time as creating the `Pet`.
+
+The `CreatePetDetailView` includes fields for entering the Pet's basic information, such as `name`, `owner`, and `type`. Additionally, a dedicated section within the same view enables users to fill out the `CoverageDetails`, such as selecting the `coverageType`, linking an `insuranceProvider`, and providing the `policyNumber`.
+
+
+.create-pet-detail-view.xml
+[source,xml]
+----
+include::example$/src/main/resources/io/jmix/petclinic/view/pet/pet/create-pet-detail-view.xml[]
+----
+<1> The `coverageDetailsDc` is an `InstancePropertyContainer` bound to the `coverageDetails` attribute of the `Pet`. This ensures that the `CoverageDetails` entity is tightly integrated into the lifecycle of the `Pet`.
+
+<2> The `coverageDetailsForm` is directly embedded within the `CreatePetDetailView` and manages fields for the `CoverageDetails` entity. This is made possible by binding the form to the `coverageDetailsDc` container.
+
+In the controller, the associated `CoverageDetails` entity is initialized programmatically during the creation of a new `Pet`. This is achieved using the `DataContext` to create a new instance of `CoverageDetails`, which is then linked to the `Pet` entity.
+
+.CreatePetDetailView.java
+[source,java]
+----
+include::example$/src/main/java/io/jmix/petclinic/view/pet/pet/CreatePetDetailView.java[tags=start-class;coverage-details-initialisation;end-class]
+----
+<1> The `onInitEntity` hook method is used to initialize a new `CoverageDetails` instance when creating a `Pet`.
+
+<2> We use `DataContext` to create a instance of `CoverageDetails` that is managed within the same transaction as the `Pet`.
+
+<3> The `CoverageDetails` is associated with the `Pet`, establishing the One-to-One composition.
+
+image::inline-editing-coverage-details-example.png[Create Pet View with Inline Editing for Coverage Details, width=800, alt="Create Pet View with Inline Editing"]
+
+By embedding the `CoverageDetails` form directly into the `CreatePetDetailView`, we enable users to define a `CoverageDetails` instance while creating a new `Pet`. This approach streamlines the process, allowing the coverage details to be initialized and associated with the `Pet` in the same view.
+
+All changes to both the `Pet` and its `CoverageDetails` are saved in a single transaction when the user confirms the operation. This ensures data consistency while reducing navigation complexity, as users no longer need to switch between multiple views to manage related entities.
+
+
 [[summary]]
 == Summary
 
-Two - three paragraphs of summary text
+In this guide, we explored the concept of composition in Jmix, a fundamental approach for modeling tightly coupled entity relationships where the lifecycle of child entities is bound to their parent. Compositions ensure data consistency and simplify transactional workflows by managing entities like Owners and their Addresses or Pets and their Coverage Details as unified structures. This allows for clean, aggregated data models aligned with the principles of domain-driven design.
+
+We examined two primary types of compositions: One-to-Many and One-to-One. One-to-Many compositions, such as between an Owner and multiple Addresses, allow for inline or dialog-based editing, providing flexibility in user interface design and transactional integrity. One-to-One compositions, as demonstrated with Pets and their Coverage Details, highlight the ability to maintain focused, singular relationships while offering robust lifecycle management.
+
+Compositions are a powerful tool in Jmix, enabling developers to model master-detail relationships effectively. By choosing the right composition type and UI approach for your use case, you can streamline your application's data management while maintaining clarity and consistency in your domain model.
 
 [[further-information]]
 === Further Information
 
 * xref:data-access:entity-events.adoc[]
+* xref:data-model:entities.adoc#references[Entity References in Jmix Data Model]
+* xref:data-model:entities.adoc#composition[Composition Relationships in Jmix]
+* xref:flow-ui:data/data-context.adoc[Data Components: DataContext]
+* xref:concepts:features.adoc#editing-aggregates[Editing Aggregates in Jmix]
