@@ -54,6 +54,7 @@
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <button action="healthRecordsDataGrid.create"/>
             <button action="healthRecordsDataGrid.edit"/>
+            <button action="healthRecordsDataGrid.nextCheckup"/>
             <button action="healthRecordsDataGrid.remove"/>
         </hbox>
         <!-- tag::health-records[] -->
@@ -69,6 +70,7 @@
                         <property name="openMode" value="DIALOG"/>
                     </properties>
                 </action>
+                <action id="nextCheckup" text="msg://nextCheckup" icon="vaadin:calendar" type="list_itemTracking"/>
                 <action id="remove" type="list_remove"/>
             </actions>
             <columns>
