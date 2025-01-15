@@ -28,6 +28,7 @@ public class PetDetailView extends StandardDetailView<Pet> {
     @Autowired
     private DialogWindows dialogWindows;
 
+    // tag::next-checkup[]
     @Subscribe("healthRecordsDataGrid.nextCheckup")
     public void onHealthRecordsDataGridNextCheckup(final ActionPerformedEvent event) {
         HealthRecord originalHealthRecord = healthRecordsDataGrid.getSingleSelectedItem();
@@ -44,5 +45,6 @@ public class PetDetailView extends StandardDetailView<Pet> {
                 .withParentDataContext(dataContext) // <3>
                 .open();
     }
+    // end::next-checkup[]
 
 }
