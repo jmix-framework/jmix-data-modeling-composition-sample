@@ -28,10 +28,13 @@ public class Pet extends NamedEntity {
     @Column(name = "IDENTIFICATION_NUMBER", nullable = false)
     @NotNull
     private String identificationNumber;
+
+    // tag::owner[]
     @JoinColumn(name = "OWNER_ID")
     @ManyToOne(fetch = FetchType.LAZY)
     private Owner owner;
 
+    // end::owner[]
 
     @JoinColumn(name = "TYPE_ID")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -60,8 +63,6 @@ public class Pet extends NamedEntity {
 
 
 
-    // tag::owner[]
-
     public CoverageDetails getCoverageDetails() {
         return coverageDetails;
     }
@@ -69,7 +70,6 @@ public class Pet extends NamedEntity {
     public void setCoverageDetails(CoverageDetails coverageDetails) {
         this.coverageDetails = coverageDetails;
     }
-    // end::owner[]
 
     public List<HealthRecord> getHealthRecords() {
         return healthRecords;

@@ -17,7 +17,7 @@ If you want to implement this guide step by step, you will need the following:
 * or clone it using git:
 `git clone https://github.com/jmix-framework/{sample-project}.git`
 
-Alternatively, you can **start with the base Petclinic project** and follow the step-by-step instructions in this guide to implement the features yourself: https://github.com/jmix-framework/jmix-petclinic-2[Jmix Petclinic] and follow along to add the functionality step-by-step.
+Alternatively, you can **start with the base https://github.com/jmix-framework/jmix-petclinic-2[Jmix Petclinic^] project** and follow the step-by-step instructions in this guide to implement the features yourself.
 
 [[what-we-are-going-to-build]]
 == What We Are Going to Build
@@ -74,6 +74,7 @@ By leveraging compositions effectively, you can model domain-specific relationsh
 
 The first example will be a one-to-many composition using the `Owner` and `Address` entities from the Petclinic domain model. The example demonstrates how to configure the data model and UI to enable inline editing of the composition entities in a detail view.
 
+[[one-to-many-data-model]]
 === Data Model
 
 The `Owner` entity contains a one-to-many collection of `Address` entities, managed as a composition. This is achieved using the `@Composition` and `@OneToMany` annotations. Here are the relevant parts of the model:
@@ -94,21 +95,23 @@ include::example$/src/main/java/io/jmix/petclinic/entity/owner/Address.java[tags
 
 While the `@OneToMany` and `@ManyToOne` associations configure the standard JPA association behaviour, the addition of `@Composition` on the `Owner` entity ensures that the `Address` instances are managed as part of the `Owner` lifecycle. This distinction introduces additional semantics for lifecycle management and transactional consistency in Jmix.
 
+[[one-to-many-ui]]
 === UI Representation
 
 In the `Owner` detail view, the user can manage multiple `Address` entities directly using an inline editable Data Grid. This provides a clear and intuitive overview of all addresses associated with the selected `Owner`. Users can view, add, edit, or delete addresses within the same view.
 
-image::owner-addresses-composition-datagrid.png[Owner Detail View with Address Table, width=800, alt="Owner Detail View"]
+image::owner-addresses-composition-datagrid.png[Owner Detail View with Address Table, width=800, alt="Owner Detail View", link="_images/owner-addresses-composition-datagrid.png"]
 
 In Jmix, there are two main approaches to editing related entities within a composition: dialog-based editing and inline editing. Dialog-based editing opens a separate view as a dialog for editing the detail entity, allowing for more extensive forms with multiple fields. Inline editing, on the other hand, enables users to directly interact with the entity within a `DataGrid` in the parent entity's detail view.
 
+[[one-to-many-ui-inline-editing]]
 ==== Inline Editing
 
 For this example, we are using inline editing to demonstrate how to manage `Address` entities directly within the `Owner` detail view. This approach works well when the detail entity has a small number of fields that can be edited easily in a tabular format. It provides an efficient workflow by keeping the user within the same view while editing.
 
 The inline editable data grid allows users to add new addresses, edit existing ones, and delete rows directly. These changes are temporarily stored in the `DataContext` of the `OwnerDetailView` and, just like during creation or editing, are only persisted to the database when the user confirms their changes by clicking "OK".
 
-image::owner-addresses-composition-datagrid-editing.png[Inline Editing Example, width=800, alt="Inline Editing for Addresses"]
+image::owner-addresses-composition-datagrid-editing.png[Inline Editing Example, width=800, alt="Inline Editing for Addresses", link="_images/owner-addresses-composition-datagrid-editing.png"]
 
 To configure inline editing for the `Address` entities in the `Owner` detail view, a `DataGrid` is used. As a first step, let’s take a look at the `owner-detail-view.xml` view descriptor, where the `dataGrid` is defined and configured for inline editing.
 
@@ -138,6 +141,7 @@ include::example$/src/main/java/io/jmix/petclinic/view/owner/OwnerDetailView.jav
 <3> Adds the new `Address` instance to the `addressesDc` data container, making it available for display and editing in the `DataGrid`.
 <4> Selects the newly added `Address` in the `DataGrid` and opens it in the inline editor for immediate modification.
 
+[[data-context]]
 === Role of the DataContext
 
 The `DataContext` in Jmix serves as a temporary storage for entities while a view is open. It allows changes made to entities—such as creating, modifying, or deleting them—to be tracked within the scope of the view without immediately persisting them to the database.
@@ -154,6 +158,7 @@ xref:flow-ui:data/data-context.adoc[Data Components: DataContext].
 
 After exploring a one-to-many composition with `Owner` and `Address`, this section demonstrates a multi-level one-to-many composition. The hierarchy consists of an `Owner` with multiple `Pets`, where each `Pet` can have multiple associated `HealthRecord` entities. This example illustrates how to model and manage nested compositions in Jmix.
 
+[[multi-level-data-model]]
 === Data Model
 
 The multi-level composition is structured as follows:
@@ -186,6 +191,7 @@ include::example$/src/main/java/io/jmix/petclinic/entity/pet/Pet.java[tags=start
 include::example$/src/main/java/io/jmix/petclinic/entity/health/HealthRecord.java[tags=start-class;pet;end-class]
 ----
 
+[[multi-level-ui]]
 === UI Representation
 
 To manage this multi-level hierarchy, we will configure nested compositions as follows:
@@ -212,24 +218,24 @@ include::example$/src/main/resources/io/jmix/petclinic/view/pet/pet/pet-detail-v
 
 The `PetDetailView` includes a nested `DataGrid` for managing `HealthRecord` entities. Using dialog windows ensures that changes to `HealthRecord` entities are linked to their parent `Pet` and ultimately to the `Owner`, with all changes saved together when the `Owner` is confirmed.
 
+[[multi-level-ui-dialog-based-editing]]
 ==== Dialog-Based Editing and Implicit Parent Data Context
 
 When managing nested entities like `Pet` and `HealthRecord`, the use of `openMode="DIALOG"` for editing actions ensures that the parent-child relationship in the `DataContext` is automatically preserved. This behavior is similar to programmatically setting the `parentDataContext`, but it happens implicitly through the dialog-based navigation.
 
 By opening child views (e.g., `PetDetailView` or `HealthRecordDetailView`) in dialog windows, Jmix automatically links the `DataContext` of the child view to that of the parent view.
 
-[WARNING]
+[CAUTION]
 ====
 Using regular view-based navigation, where the child view replaces the currently visible parent view does not maintain the parent-child relationship in the `DataContext`. This is due to how Vaadin Flow operates, creating new view instances with separate `DataContext` objects for each navigation. To preserve these relationships and ensure transactional consistency, dialog-based navigation should be used.
 ====
-
-To maintain the parent-child relationship in the Data Context, dialog-based navigation is used. This approach ensures that child views inherit the Data Context from their parent, preserving transactional consistency.
 
 Dialog windows not only maintain the Data Context but also provide users with a clear and intuitive understanding of their position within the hierarchy. This visual continuity enhances the user experience, making it easier to navigate complex aggregates while keeping the application context intact.
 
 For more details on dialog navigation and how it facilitates Data Context inheritance, see:
 xref:concepts:features.adoc#navigation-and-dialogs[Concepts: Navigation and Dialogs].
 
+[[multi-level-ui-explicit-parent-data-context]]
 ==== Explicit Parent Data Context
 
 In addition to the implicit parent Data Context approach used in dialog-based navigation, there are scenarios where you need to explicitly define and set the parent data context on a dialog based view. This is particularly useful when custom logic is required, such as initializing fields or handling custom workflows.
@@ -243,17 +249,19 @@ include::example$/src/main/java/io/jmix/petclinic/view/pet/pet/PetDetailView.jav
 ----
 <1> The `dialogWindows.detail` method creates a detail dialog for managing a new `HealthRecord` entity. Passing the `healthRecordsDataGrid` ensures that the new entity is added to the grid's data container after the user confirms their changes.
 <2> The `setPet` method links the new `HealthRecord` with the currently selected `Pet`, maintaining the parent-child relationship.
-<3> The `withParentDataContext` ensures that the new `HealthRecord` shares the same `dataContext` as the `PetDetailView`. This means the new record remains in a transient state until explicitly saved, ensuring that the health record is only saved once the Pet is saved.
+<3> The `withParentDataContext` ensures that the new `HealthRecord` shares the same `dataContext` as the `PetDetailView`. This means the new record remains in a transient state until saved together with the Pet.
 
 This implementation allows the system to maintain a clear connection between the `Pet` and its `HealthRecord` entities, even during custom workflows. By explicitly setting the parent `dataContext`, the `HealthRecord` remains in sync with the parent entity, ensuring transactional consistency.
 
 For more details on managing Data Context hierarchies, see:
 xref:flow-ui:data/data-context.adoc#parent-data-context[Data Components: DataContext - Parent Data Context].
 
+[[one-to-one-composition]]
 == One-to-One Composition
 
 In addition to the previously discussed One-to-Many compositions, Jmix also supports One-to-One compositions. This type of composition is useful when the child entity is singular and uniquely tied to its parent. For example, in the context of the Petclinic domain, we introduce the `CoverageDetails` entity, which represents specific coverage-related information for a pet. Each `Pet` can have at most one associated `CoverageDetails` instance.
 
+[[one-to-one-data-model]]
 === Data Model
 
 The data model for the One-to-One composition between `Pet` and `CoverageDetails` is structured as follows:
@@ -280,17 +288,19 @@ The `mappedBy` attribute indicates that the `CoverageDetails` entity does not ow
 
 Adding this back-reference would allow navigation from `CoverageDetails` to `Pet` via Java and JPQL queries. For more information about unidirectional and bidirectional associations, as well as other JPA relationship concepts like owning side and inverse side, see the guide on xref:data-modeling-many-to-many-guide:index.adoc[Data Modeling: Many-to-Many Associations].
 
+[[one-to-one-ui]]
 === UI Representation
 
 In this section, we will explore two approaches for managing One-to-One compositions in the user interface: **Dialog-Based Editing** and **Inline Editing**. By comparing these variants, you will gain an understanding of how each approach works and when to use them to best suit your application's requirements.
 
+[[one-to-one-ui-dialog-based-editing]]
 ==== Dialog-Based Editing
 
 For this first case  of dialog based editing, we configure the `PetDetailView` to manage the `CoverageDetails` entity using a dialog-based detail view. This approach allows detailed editing of the `CoverageDetails` while preserving the context of the `Pet` in the parent view.
 
-image::pet-detail-view-dialog-example.png[Pet Detail View with EntityPicker, width=800, alt="Pet Detail View with EntityPicker"]
+image::pet-detail-view-dialog-example.png[Pet Detail View with EntityPicker, width=800, alt="Pet Detail View with EntityPicker", link="_images/pet-detail-view-dialog-example.png"]
 
-image::coverage-detail-dialog-example.png[Coverage Details Dialog View, width=800, alt="Coverage Details Dialog"]
+image::coverage-detail-dialog-example.png[Coverage Details Dialog View, width=800, alt="Coverage Details Dialog", link="_images/coverage-detail-dialog-example.png"]
 
 In the `PetDetailView`, the `CoverageDetails` entity is managed using an `EntityPicker` component with an `entity_openComposition` action. This action is specifically designed for One-to-One compositions and simplifies the creation and editing of associated entities.
 
@@ -308,6 +318,7 @@ See also: xref:flow-ui:actions/entity-picker-actions.adoc#entity_openComposition
 
 Let's now look at an alternative implementation where we use inline editing in the context of a one-to-one composition.
 
+[[one-to-one-ui-inline-editing]]
 ==== Inline Editing
 
 For the second example of inline editing, let's improve the creation of new `Pet` entities by introducing a new dedicated `CreatePetDetailView` for creating pets. This view is designed to simplify the workflow by allowing users to define `CoverageDetails` at the same time as creating the `Pet`.
@@ -337,7 +348,7 @@ include::example$/src/main/java/io/jmix/petclinic/view/pet/pet/CreatePetDetailVi
 
 <3> The `CoverageDetails` is associated with the `Pet`, establishing the One-to-One composition.
 
-image::inline-editing-coverage-details-example.png[Create Pet View with Inline Editing for Coverage Details, width=800, alt="Create Pet View with Inline Editing"]
+image::inline-editing-coverage-details-example.png[Create Pet View with Inline Editing for Coverage Details, width=800, alt="Create Pet View with Inline Editing", link="_images/inline-editing-coverage-details-example.png"]
 
 By embedding the `CoverageDetails` form directly into the `CreatePetDetailView`, we enable users to define a `CoverageDetails` instance while creating a new `Pet`.
 
