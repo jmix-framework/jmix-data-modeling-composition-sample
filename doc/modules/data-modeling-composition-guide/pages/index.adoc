@@ -136,7 +136,7 @@ include::example$/src/main/resources/io/jmix/petclinic/view/owner/owner-detail-v
 ====
 The `editorBuffered="true"` attribute is a Vaadin-specific feature that introduces an intermediate buffer for inline editing in a `DataGrid`. This means that changes made within the grid editor are held temporarily in a local buffer and only applied to the `DataContext` when the user explicitly confirms them. This design ensures a controlled editing workflow and provides flexibility for users to review their changes before they are committed.
 
-For more details, see the Vaadin Grid documentation on https://vaadin.com/docs/latest/components/grid/inline-editing#buffered[Inline Editing^].
+For more details, see the Vaadin Grid documentation on https://vaadin.com/docs/v24/components/grid/inline-editing#buffered[Inline Editing^].
 ====
 
 Next, we look at the changes needed in the `OwnerDetailView` controller. To fully enable inline editing, the controller must handle the creation and editing of records programmatically. For the "Create" action, a new `Address` entity is created, associated with the current `Owner`, and immediately opened for editing in the `DataGrid`.
